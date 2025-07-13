@@ -1,0 +1,176 @@
+[1mdiff --cc README.md[m
+[1mindex a95f6743,84bc0cf6..00000000[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@@ -1,223 -1,2 +1,225 @@@[m
+[32m +# Family Echo - Digital Family Legacy Website[m
+[32m +[m
+[32m +A beautiful, interactive digital archive designed to celebrate and preserve family memories, profiles, and voices. Make your family "alive online" with emotional, accessible, and engaging content.[m
+[32m +[m
+[32m +## 🌟 Features[m
+[32m +[m
+[32m +### Core Functionality[m
+[32m +- **Family Profiles**: Detailed member profiles with photos, bios, hobbies, and voice recordings[m
+[32m +- **Memory Gallery**: Photo, video, audio, and text memories with tagging and filtering[m
+[32m +- **Interactive Family Tree**: Visual family tree with zoom, search, and member details[m
+[32m +- **Voice Memories**: Audio clips for preserving family voices and stories[m
+[32m +- **Memorial Profiles**: Special tribute sections for deceased family members[m
+[32m +- **Search & Filter**: Advanced search across all content with multiple filter options[m
+[32m +[m
+[32m +### User Experience[m
+[32m +- **Responsive Design**: Beautiful on desktop, tablet, and mobile devices[m
+[32m +- **Accessibility**: High-contrast mode, keyboard navigation, and screen reader support[m
+[32m +- **Smooth Animations**: Framer Motion animations for engaging interactions[m
+[32m +- **Breadcrumb Navigation**: Easy navigation with clear page hierarchy[m
+[32m +- **Loading States**: Elegant loading indicators and transitions[m
+[32m +[m
+[32m +### Visual Design[m
+[32m +- **Warm Color Palette**: Soft blue (#4A90E2), cream (#FFF8E7), and gold (#FFD700)[m
+[32m +- **Typography**: Lora (serif) for headings, Roboto (sans-serif) for body text[m
+[32m +- **Polaroid Frames**: Nostalgic photo styling with subtle rotations[m
+[32m +- **Card-based Layout**: Clean, organized content presentation[m
+[32m +- **Custom Animations**: Fade-in effects and smooth transitions[m
+[32m +[m
+[32m +## 🛠️ Technology Stack[m
+[32m +[m
+[32m +### Frontend[m
+[32m +- **React.js 18**: Modern React with hooks and functional components[m
+[32m +- **React Router**: Client-side routing with animated transitions[m
+[32m +- **Tailwind CSS**: Utility-first CSS framework with custom design system[m
+[32m +- **Framer Motion**: Smooth animations and page transitions[m
+[32m +- **Lucide React**: Beautiful, customizable icons[m
+[32m +- **React Player**: Audio and video playback[m
+[32m +- **React Query**: Data fetching and caching[m
+[32m +[m
+[32m +### Backend (Planned)[m
+[32m +- **Spring Boot**: Java-based REST API[m
+[32m +- **Oracle SQL**: Relational database for family data[m
+[32m +- **JWT Authentication**: Secure user authentication[m
+[32m +- **AWS S3**: Media file storage[m
+[32m +[m
+[32m +## 📁 Project Structure[m
+[32m +[m
+[32m +```[m
+[32m +family-echo/[m
+[32m +├── public/[m
+[32m +│   ├── index.html          # Main HTML file with SEO optimization[m
+[32m +│   └── manifest.json       # PWA manifest[m
+[32m +├── src/[m
+[32m +│   ├── components/         # Reusable UI components[m
+[32m +│   │   ├── Navbar.js       # Navigation with search and breadcrumbs[m
+[32m +│   │   ├── Footer.js       # Footer with contact info and links[m
+[32m +│   │   ├── ProfileCard.js  # Family member profile cards[m
+[32m +│   │   └── MemoryCard.js   # Memory display cards[m
+[32m +│   ├── pages/              # Main page components[m
+[32m +│   │   ├── HomePage.js     # Landing page with hero and featured content[m
+[32m +│   │   ├── ProfilesPage.js # Family profiles grid with filtering[m
+[32m +│   │   ├── ProfileDetailPage.js # Detailed member profiles[m
+[32m +│   │   ├── MemoriesPage.js # Memory gallery with upload form[m
+[32m +│   │   ├── FamilyTreePage.js # Interactive family tree[m
+[32m +│   │   └── ContactPage.js  # Contact form and information[m
+[32m +│   ├── context/            # React context for state management[m
+[32m +│   │   └── FamilyContext.js # Family data and API functions[m
+[32m +│   ├── App.js              # Main app component with routing[m
+[32m +│   ├── index.js            # React entry point[m
+[32m +│   └── index.css           # Global styles and Tailwind imports[m
+[32m +├── tailwind.config.js      # Tailwind CSS configuration[m
+[32m +├── package.json            # Dependencies and scripts[m
+[32m +└── README.md              # Project documentation[m
+[32m +```[m
+[32m +[m
+[32m +## 🚀 Getting Started[m
+[32m +[m
+[32m +### Prerequisites[m
+[32m +- Node.js 16+ and npm[m
+[32m +- Modern web browser[m
+[32m +[m
+[32m +### Installation[m
+[32m +[m
+[32m +1. **Clone the repository**[m
+[32m +   ```bash[m
+[32m +   git clone https://github.com/yourusername/family-echo.git[m
+[32m +   cd family-echo[m
+[32m +   ```[m
+[32m +[m
+[32m +2. **Install dependencies**[m
+[32m +   ```bash[m
+[32m +   npm install[m
+[32m +   ```[m
+[32m +[m
+[32m +3. **Start the development server**[m
+[32m +   ```bash[m
+[32m +   npm start[m
+[32m +   ```[m
+[32m +[m
+[32m +4. **Open your browser**[m
+[32m +   Navigate to `http://localhost:3000` to see the application[m
+[32m +[m
+[32m +### Available Scripts[m
+[32m +[m
+[32m +- `npm start` - Start development server[m
+[32m +- `npm build` - Build for production[m
+[32m +- `npm test` - Run tests[m
+[32m +- `npm eject` - Eject from Create React App[m
+[32m +[m
+[32m +## 🎨 Design System[m
+[32m +[m
+[32m +### Colors[m
+[32m +- **Primary Blue**: #4A90E2 - Main brand color[m
+[32m +- **Primary Cream**: #FFF8E7 - Background and warm accent[m
+[32m +- **Primary Gold**: #FFD700 - Highlight and accent color[m
+[32m +- **Accent Gray**: #4A4A4A - Text and neutral elements[m
+[32m +- **Accent Red**: #E57373 - Memorial and special indicators[m
+[32m +[m
+[32m +### Typography[m
+[32m +- **Headings**: Lora (serif) - 16px base with 1.5x scaling[m
+[32m +- **Body**: Roboto (sans-serif) - Clean, readable text[m
+[32m +- **Font Sizes**: 16px base, 24px, 32px, 48px for headers[m
+[32m +[m
+[32m +### Components[m
+[32m +- **Cards**: White background with rounded corners and shadows[m
+[32m +- **Buttons**: Primary (blue) and secondary (cream) styles[m
+[32m +- **Polaroid Frames**: White borders with subtle rotations[m
+[32m +- **Glass Effects**: Semi-transparent overlays with blur[m
+[32m +[m
+[32m +## 📱 Responsive Design[m
+[32m +[m
+[32m +The website is fully responsive with breakpoints:[m
+[32m +- **Mobile**: < 768px[m
+[32m +- **Tablet**: 768px - 1024px[m
+[32m +- **Desktop**: > 1024px[m
+[32m +[m
+[32m +## ♿ Accessibility Features[m
+[32m +[m
+[32m +- **Keyboard Navigation**: Full keyboard support[m
+[32m +- **Screen Reader**: Proper ARIA labels and semantic HTML[m
+[32m +- **High Contrast**: Enhanced contrast mode support[m
+[32m +- **Reduced Motion**: Respects user motion preferences[m
+[32m +- **Alt Text**: Descriptive alt text for all images[m
+[32m +[m
+[32m +## 🔧 Customization[m
+[32m +[m
+[32m +### Adding New Family Members[m
+[32m +1. Edit the `FamilyContext.js` file[m
+[32m +2. Add member data to the `initialState.members` array[m
+[32m +3. Include photo URL, bio, hobbies, and relationship[m
+[32m +[m
+[32m +### Styling Changes[m
+[32m +1. Modify `tailwind.config.js` for design system changes[m
+[32m +2. Update `src/index.css` for global styles[m
+[32m +3. Use Tailwind classes for component-specific styling[m
+[32m +[m
+[32m +### Adding New Pages[m
+[32m +1. Create new component in `src/pages/`[m
+[32m +2. Add route to `src/App.js`[m
+[32m +3. Update navigation in `src/components/Navbar.js`[m
+[32m +[m
+[32m +## 🚀 Deployment[m
+[32m +[m
+[32m +### Build for Production[m
+[32m +```bash[m
+[32m +npm run build[m
+[32m +```[m
+[32m +[m
+[32m +### Deploy Options[m
+[32m +- **Netlify**: Drag and drop the `build` folder[m
+[32m +- **Vercel**: Connect GitHub repository for automatic dep
