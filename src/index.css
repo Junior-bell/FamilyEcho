@@ -56,6 +56,27 @@
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.18);
   }
+
+  /* Consistent spacing utilities */
+  .section-padding {
+    @apply py-16 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .page-padding {
+    @apply py-12 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+  
+  .card-spacing {
+    @apply p-6;
+  }
+  
+  .form-spacing {
+    @apply px-4 py-3;
+  }
 }
 
 @layer utilities {

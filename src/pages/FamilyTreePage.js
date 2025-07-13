@@ -75,8 +75,8 @@ const FamilyTreePage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-primary-cream py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-primary-cream page-padding">
+      <div className="max-w-7xl mx-auto container-padding">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -7,7 +7,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-accent-gray text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto section-padding">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="col-span-1 md:col-span-2">
@@ -135,7 +135,7 @@ const Footer = () => {
 
       {/* Accessibility Note */}
       <div className="bg-gray-800 py-2">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto container-padding">
           <p className="text-xs text-gray-400 text-center">
             This website is designed with accessibility in mind. For the best experience, 
             please ensure JavaScript is enabled and consider using a modern web browser.
