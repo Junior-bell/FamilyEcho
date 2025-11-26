@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play, Pause, Share2, Edit, Heart, Calendar, Users, ArrowLeft } from 'lucide-react';
+import { Play, Pause, Share2, Edit, Heart, Calendar, Users, ArrowLeft, Trash2 } from 'lucide-react';
 import ReactPlayer from 'react-player';
 import { useFamily } from '../context/FamilyContext';
 import MemoryCard from '../components/MemoryCard';
+import AddMemberForm from '../components/AddMemberForm';
 
 const ProfileDetailPage = () => {
   const { id } = useParams();
-  const { getMemberById, getMemoriesByMemberId } = useFamily();
+  const navigate = useNavigate();
+  const { getMemberById, getMemoriesByMemberId, deleteMember } = useFamily();
   const [member, setMember] = useState(null);
   const [memories, setMemories] = useState([]);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
 
   useEffect(() => {
     const memberData = getMemberById(id);
@@ -21,9 +24,10 @@ const ProfileDetailPage = () => {
       const memberMemories = getMemoriesByMemberId(id);
       setMemories(memberMemories);
     }
-  }, [id, getMemberById, getMemoriesByMemberId]);
+  }, [id, getMemberById, getMemoriesByMemberId, isEditFormOpen]); // Refresh when edit form closes
 
   const formatDate = (dateString) => {
+    if (!dateString) return 'Unknown';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -33,16 +37,29 @@ const ProfileDetailPage = () => {
   };
 
   const calculateAge = (birthDate) => {
+    if (!birthDate) return null;
     const today = new Date();
     const birth = new Date(birthDate);
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
       age--;
     }
-    
+
     return age;
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this family member? This action cannot be undone.')) {
+      try {
+        await deleteMember(member.id);
+        navigate('/profiles');
+      } catch (error) {
+        console.error('Error deleting member:', error);
+        alert('Failed to delete member');
+      }
+    }
   };
 
   if (!member) {
@@ -66,8 +83,8 @@ const ProfileDetailPage = () => {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <Link 
-            to="/profiles" 
+          <Link
+            to="/profiles"
             className="inline-flex items-center space-x-2 text-primary-blue hover:text-blue-600 transition-colors duration-300"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -88,12 +105,12 @@ const ProfileDetailPage = () => {
               <div className="relative">
                 <div className="polaroid-frame">
                   <img
-                    src={member.photo}
+                    src={member.photo || 'https://via.placeholder.com/300x300?text=Profile+Photo'}
                     alt={member.name}
                     className="w-full h-80 object-cover rounded-lg"
                   />
                 </div>
-                
+
                 {/* Deceased Badge */}
                 {member.isDeceased && (
                   <div className="absolute top-4 left-4 bg-accent-red text-white px-3 py-1 rounded-full text-sm font-medium">
@@ -114,14 +131,25 @@ const ProfileDetailPage = () => {
                     {member.relationship}
                   </p>
                 </div>
-                
+
                 {/* Action Buttons */}
                 <div className="flex space-x-3">
-                  <button className="p-3 bg-primary-cream text-accent-gray rounded-full hover:bg-primary-blue hover:text-white transition-colors duration-300">
+                  <button className="p-3 bg-primary-cream text-accent-gray rounded-full hover:bg-primary-blue hover:text-white transition-colors duration-300" title="Share Profile">
                     <Share2 className="h-5 w-5" />
                   </button>
-                  <button className="p-3 bg-primary-cream text-accent-gray rounded-full hover:bg-primary-blue hover:text-white transition-colors duration-300">
+                  <button
+                    onClick={() => setIsEditFormOpen(true)}
+                    className="p-3 bg-primary-cream text-accent-gray rounded-full hover:bg-primary-blue hover:text-white transition-colors duration-300"
+                    title="Edit Profile"
+                  >
                     <Edit className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    className="p-3 bg-primary-cream text-accent-gray rounded-full hover:bg-accent-red hover:text-white transition-colors duration-300"
+                    title="Delete Profile"
+                  >
+                    <Trash2 className="h-5 w-5" />
                   </button>
                 </div>
               </div>
@@ -129,7 +157,7 @@ const ProfileDetailPage = () => {
               {/* Bio */}
               <div className="mb-6">
                 <h3 className="text-lg font-lora font-semibold text-accent-gray mb-3">About</h3>
-                <p className="text-accent-gray leading-relaxed">{member.bio}</p>
+                <p className="text-accent-gray leading-relaxed">{member.bio || 'No biography available.'}</p>
               </div>
 
               {/* Details */}
@@ -139,11 +167,11 @@ const ProfileDetailPage = () => {
                   <div>
                     <p className="text-sm text-accent-gray opacity-75">Birth Date</p>
                     <p className="text-accent-gray font-medium">
-                      {formatDate(member.birthDate)} ({calculateAge(member.birthDate)} years old)
+                      {member.birthDate ? `${formatDate(member.birthDate)} (${calculateAge(member.birthDate)} years old)` : 'Not provided'}
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-3">
                   <Users className="h-5 w-5 text-primary-blue" />
                   <div>
@@ -254,7 +282,7 @@ const ProfileDetailPage = () => {
               In Loving Memory of {member.name}
             </h3>
             <p className="text-lg text-gray-300 mb-6 max-w-2xl mx-auto">
-              Though they may be gone from our sight, they will never be gone from our hearts. 
+              Though they may be gone from our sight, they will never be gone from our hearts.
               Their memory lives on through the stories we share and the love we continue to feel.
             </p>
             <button className="btn-primary bg-primary-gold text-accent-gray hover:bg-yellow-400">
@@ -263,8 +291,15 @@ const ProfileDetailPage = () => {
           </motion.div>
         )}
       </div>
+
+      {/* Edit Member Modal */}
+      <AddMemberForm
+        isOpen={isEditFormOpen}
+        onClose={() => setIsEditFormOpen(false)}
+        initialData={member}
+      />
     </div>
   );
 };
 
-export default ProfileDetailPage; 
+export default ProfileDetailPage;
