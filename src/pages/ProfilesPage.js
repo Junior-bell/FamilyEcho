@@ -3,12 +3,14 @@ import { motion } from 'framer-motion';
 import { Search, Filter, Users, Heart } from 'lucide-react';
 import { useFamily } from '../context/FamilyContext';
 import ProfileCard from '../components/ProfileCard';
+import AddMemberForm from '../components/AddMemberForm';
 
 const ProfilesPage = () => {
   const { members } = useFamily();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRelationship, setSelectedRelationship] = useState('all');
   const [showDeceasedOnly, setShowDeceasedOnly] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   // Get unique relationships for filter
   const relationships = useMemo(() => {
@@ -20,12 +22,12 @@ const ProfilesPage = () => {
   const filteredMembers = useMemo(() => {
     return members.filter(member => {
       const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          member.relationship.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          member.bio.toLowerCase().includes(searchQuery.toLowerCase());
-      
+        member.relationship.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        member.bio.toLowerCase().includes(searchQuery.toLowerCase());
+
       const matchesRelationship = selectedRelationship === 'all' || member.relationship === selectedRelationship;
       const matchesDeceasedFilter = !showDeceasedOnly || member.isDeceased;
-      
+
       return matchesSearch && matchesRelationship && matchesDeceasedFilter;
     });
   }, [members, searchQuery, selectedRelationship, showDeceasedOnly]);
@@ -68,7 +70,7 @@ const ProfilesPage = () => {
             </h1>
           </div>
           <p className="text-lg text-accent-gray max-w-2xl mx-auto">
-            Discover the stories, voices, and memories of each family member. 
+            Discover the stories, voices, and memories of each family member.
             Every profile is a window into the unique personality that makes our family special.
           </p>
         </motion.div>
@@ -206,17 +208,26 @@ const ProfilesPage = () => {
               Missing a Family Member?
             </h3>
             <p className="text-accent-gray mb-6 max-w-2xl mx-auto">
-              Help us complete our family archive by adding profiles for all family members. 
+              Help us complete our family archive by adding profiles for all family members.
               Every story matters and every voice deserves to be heard.
             </p>
-            <button className="btn-primary">
+            <button
+              onClick={() => setIsFormOpen(true)}
+              className="btn-primary"
+            >
               Add New Profile
             </button>
           </div>
         </motion.div>
       </div>
+
+      {/* Add Member Form Modal */}
+      <AddMemberForm
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+      />
     </div>
   );
 };
 
-export default ProfilesPage; 
+export default ProfilesPage;

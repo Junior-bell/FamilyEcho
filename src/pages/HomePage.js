@@ -11,7 +11,7 @@ const HomePage = () => {
 
   // Get featured profiles (first 3 members)
   const featuredProfiles = members.slice(0, 3);
-  
+
   // Get recent memories (last 4 memories)
   const recentMemories = memories.slice(-4).reverse();
 
@@ -48,7 +48,7 @@ const HomePage = () => {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <motion.h1 
+            <motion.h1
               className="text-4xl md:text-6xl font-lora font-bold mb-6 text-shadow"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -56,13 +56,13 @@ const HomePage = () => {
             >
               Welcome to Family Echo
             </motion.h1>
-            <motion.p 
+            <motion.p
               className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-shadow"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              A digital archive to celebrate and preserve family memories, profiles, and voices. 
+              A digital archive to celebrate and preserve family memories, profiles, and voices.
               Make your family alive online with interactive, emotional, and accessible content.
             </motion.p>
             <motion.div
@@ -71,12 +71,13 @@ const HomePage = () => {
               transition={{ duration: 0.8, delay: 0.6 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Link to="/family-tree" className="btn-primary text-lg px-8 py-4">
+              <Link to="/family-tree" className="btn-primary">
                 Explore Family Tree
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
-              <Link to="/profiles" className="btn-secondary text-lg px-8 py-4">
+              <Link to="/profiles" className="btn-secondary">
                 View All Profiles
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </motion.div>
           </motion.div>
@@ -148,7 +149,7 @@ const HomePage = () => {
               Featured Family Members
             </h2>
             <p className="text-lg text-accent-gray max-w-2xl mx-auto">
-              Meet the wonderful people who make our family special. Each profile contains 
+              Meet the wonderful people who make our family special. Each profile contains
               stories, memories, and the unique voice that makes them who they are.
             </p>
           </motion.div>
@@ -196,7 +197,7 @@ const HomePage = () => {
               Recent Memories
             </h2>
             <p className="text-lg text-accent-gray max-w-2xl mx-auto">
-              Relive the moments that bring us together. From family vacations to everyday 
+              Relive the moments that bring us together. From family vacations to everyday
               celebrations, every memory tells a story.
             </p>
           </motion.div>
@@ -243,11 +244,11 @@ const HomePage = () => {
               Start Preserving Your Family's Legacy
             </h2>
             <p className="text-xl mb-8 text-gray-300">
-              Every family has stories worth telling. Join us in creating a digital archive 
+              Every family has stories worth telling. Join us in creating a digital archive
               that will be cherished for generations to come.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/contact" className="btn-primary bg-primary-gold text-accent-gray hover:bg-yellow-400">
+              <Link to="/contact" className="btn-gold">
                 Get Started Today
               </Link>
               <Link to="/family-tree" className="btn-secondary border-primary-gold text-primary-gold hover:bg-primary-gold hover:text-accent-gray">
@@ -261,4 +262,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage; 
+export default HomePage;

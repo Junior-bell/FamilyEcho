@@ -6,51 +6,60 @@
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
     font-family: 'Roboto', sans-serif;
     background-color: #FFF8E7;
     color: #4A4A4A;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Lora', serif;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-blue text-white px-6 py-3 rounded-card font-medium transition-all duration-300 hover:bg-blue-600 hover:shadow-lg transform hover:-translate-y-1;
+    @apply inline-flex items-center justify-center relative overflow-hidden bg-gradient-to-r from-primary-blue to-blue-500 text-white px-8 py-4 rounded-full font-bold tracking-wide shadow-lg transition-all duration-300 hover:shadow-primary-blue/40 hover:shadow-xl hover:-translate-y-1 hover:scale-105 active:scale-95;
   }
-  
+
   .btn-secondary {
-    @apply bg-primary-cream text-accent-gray border-2 border-primary-blue px-6 py-3 rounded-card font-medium transition-all duration-300 hover:bg-primary-blue hover:text-white;
+    @apply inline-flex items-center justify-center relative overflow-hidden bg-white text-primary-blue border-2 border-primary-blue px-8 py-4 rounded-full font-bold tracking-wide shadow-md transition-all duration-300 hover:bg-primary-blue hover:text-white hover:shadow-primary-blue/30 hover:shadow-xl hover:-translate-y-1 active:scale-95;
   }
-  
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center relative overflow-hidden bg-gradient-to-r from-primary-gold to-yellow-400 text-accent-gray px-8 py-4 rounded-full font-bold tracking-wide shadow-lg transition-all duration-300 hover:shadow-primary-gold/40 hover:shadow-xl hover:-translate-y-1 hover:scale-105 active:scale-95;
+  }
+
   .card {
     @apply bg-white rounded-card shadow-card p-6 transition-all duration-300 hover:shadow-xl;
   }
-  
+
   .polaroid-frame {
     @apply bg-white p-4 rounded-polaroid shadow-polaroid transform rotate-1 hover:rotate-0 transition-transform duration-300;
   }
-  
+
   .nav-link {
     @apply text-accent-gray hover:text-primary-blue transition-colors duration-300 font-medium;
   }
-  
+
   .nav-link.active {
     @apply text-primary-blue border-b-2 border-primary-blue;
   }
-  
+
   .hero-gradient {
     background: linear-gradient(135deg, #4A90E2 0%, #FFD700 100%);
   }
-  
+
   .text-shadow {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   }
-  
+
   .glass-effect {
     background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(10px);
@@ -61,19 +70,19 @@
   .section-padding {
     @apply py-16 px-4 sm:px-6 lg:px-8;
   }
-  
+
   .page-padding {
     @apply py-12 px-4 sm:px-6 lg:px-8;
   }
-  
+
   .container-padding {
     @apply px-4 sm:px-6 lg:px-8;
   }
-  
+
   .card-spacing {
     @apply p-6;
   }
-  
+
   .form-spacing {
     @apply px-4 py-3;
   }
@@ -83,11 +92,11 @@
   .animate-fade-in {
     animation: fadeIn 0.6s ease-in-out;
   }
-  
+
   .animate-slide-up {
     animation: slideUp 0.5s ease-out;
   }
-  
+
   .animate-pulse-slow {
     animation: pulse 3s infinite;
   }
@@ -116,7 +125,7 @@
   .card {
     @apply border-2 border-accent-gray;
   }
-  
+
   .btn-primary {
     @apply border-2 border-white;
   }
@@ -129,4 +138,4 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-} 
+}

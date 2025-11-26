@@ -1,44 +1,19 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
-const FamilyContext = createContext();
+// Export the raw context for any direct imports
+export const FamilyContext = createContext();
 
-// Sample data structure
+// API base URL
+const API_BASE_URL = 'http://localhost:8081/api';
+
+// Initial state with empty data (will be populated from backend)
 const initialState = {
   members: [],
   memories: [],
+  relationships: [],
   familyTree: {
-    nodes: [
-      { id: 1, name: "दिगंबरराव राजाराम पवार (Digambarrao Rajaram Pawar)", relationship: "Grandfather" },
-      { id: 2, name: "कमलबाई दिगंबरराव पवार (Kamalabai Digambarrao Pawar)", relationship: "Grandmother" },
-      // First child directly after grandparents
-      { id: 3, name: "Meena Ashokrao Waghchaure", relationship: "Daughter" },
-      { id: 4, name: "Ashokrao Wamanrao Waghchaure", relationship: "Son-in-law" },
-      { id: 5, name: "Mai (Sandhya Dhyaneshwar Borde)", relationship: "Daughter" },
-      { id: 6, name: "Dhyaneshwarrao Vasantrao Borde", relationship: "Son-in-law" },
-      { id: 7, name: "Vandana Vijayrao Ingale", relationship: "Daughter" },
-      { id: 8, name: "Vijay Ganpatrao Ingale", relationship: "Son-in-law" },
-      { id: 9, name: "Manda Ashokrao Wagh", relationship: "Daughter" },
-      { id: 10, name: "Ashokrao Fakirrao Wagh", relationship: "Son-in-law" },
-      { id: 11, name: "Yogesh Digambarrao Pawar", relationship: "Son" },
-      { id: 12, name: "Gayatri Yogeshrao Wagh", relationship: "Daughter-in-law" }
-    ],
-    links: [
-      // Grandparents (spouse)
-      { source: 1, target: 2 },
-      // Meena as first child of grandparents
-      { source: 1, target: 3 }, { source: 2, target: 3 },
-      // Other children of grandparents
-      { source: 1, target: 5 }, { source: 2, target: 5 },
-      { source: 1, target: 7 }, { source: 2, target: 7 },
-      { source: 1, target: 9 }, { source: 2, target: 9 },
-      { source: 1, target: 11 }, { source: 2, target: 11 },
-      // Spouses of children
-      { source: 3, target: 4 },
-      { source: 5, target: 6 },
-      { source: 7, target: 8 },
-      { source: 9, target: 10 },
-      { source: 11, target: 12 }
-    ]
+    nodes: [],
+    links: []
   },
   loading: false,
   error: null
@@ -55,7 +30,7 @@ const familyReducer = (state, action) => {
     case 'UPDATE_MEMBER':
       return {
         ...state,
-        members: state.members.map(member =>
+        members: state.members.map((member) =>
           member.id === action.payload.id ? action.payload : member
         )
       };
@@ -64,7 +39,7 @@ const familyReducer = (state, action) => {
     case 'UPDATE_MEMORY':
       return {
         ...state,
-        memories: state.memories.map(memory =>
+        memories: state.memories.map((memory) =>
           memory.id === action.payload.id ? action.payload : memory
         )
       };
@@ -72,6 +47,32 @@ const familyReducer = (state, action) => {
       return { ...state, members: action.payload };
     case 'SET_MEMORIES':
       return { ...state, memories: action.payload };
+    case 'DELETE_MEMBER':
+      return {
+        ...state,
+        members: state.members.filter((member) => member.id !== action.payload)
+      };
+    case 'DELETE_MEMORY':
+      return {
+        ...state,
+        memories: state.memories.filter((memory) => memory.id !== action.payload)
+      };
+    case 'SET_RELATIONSHIPS':
+      return { ...state, relationships: action.payload };
+    case 'ADD_RELATIONSHIP':
+      return { ...state, relationships: [...state.relationships, action.payload] };
+    case 'UPDATE_RELATIONSHIP':
+      return {
+        ...state,
+        relationships: state.relationships.map((rel) =>
+          rel.id === action.payload.id ? action.payload : rel
+        )
+      };
+    case 'DELETE_RELATIONSHIP':
+      return {
+        ...state,
+        relationships: state.relationships.filter((rel) => rel.id !== action.payload)
+      };
     default:
       return state;
   }
@@ -80,19 +81,105 @@ const familyReducer = (state, action) => {
 export const FamilyProvider = ({ children }) => {
   const [state, dispatch] = useReducer(familyReducer, initialState);
 
-  // Simulate API calls
+  // Fetch members from backend on mount
+  useEffect(() => {
+    const fetchMembers = async () => {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      try {
+        const response = await fetch(`${API_BASE_URL}/members`);
+        if (!response.ok) throw new Error('Failed to fetch members');
+        const data = await response.json();
+        dispatch({ type: 'SET_MEMBERS', payload: data });
+      } catch (error) {
+        console.error('Error fetching members:', error);
+        dispatch({ type: 'SET_ERROR', payload: error.message });
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }
+    };
+
+    const fetchMemories = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/memories`);
+        if (!response.ok) throw new Error('Failed to fetch memories');
+        const data = await response.json();
+        dispatch({ type: 'SET_MEMORIES', payload: data });
+      } catch (error) {
+        console.error('Error fetching memories:', error);
+        dispatch({ type: 'SET_ERROR', payload: error.message });
+      }
+    };
+
+    const fetchRelationships = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/relationships`);
+        if (!response.ok) throw new Error('Failed to fetch relationships');
+        const data = await response.json();
+        dispatch({ type: 'SET_RELATIONSHIPS', payload: data });
+      } catch (error) {
+        console.error('Error fetching relationships:', error);
+        dispatch({ type: 'SET_ERROR', payload: error.message });
+      }
+    };
+
+    fetchMembers();
+    fetchMemories();
+    fetchRelationships();
+  }, []);
+
+  // API calls
   const addMember = async (memberData) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const newMember = {
-        ...memberData,
-        id: Math.max(...state.members.map(m => m.id)) + 1,
-        memories: []
-      };
+      const response = await fetch(`${API_BASE_URL}/members`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(memberData),
+      });
+      if (!response.ok) throw new Error('Failed to add member');
+      const newMember = await response.json();
       dispatch({ type: 'ADD_MEMBER', payload: newMember });
     } catch (error) {
+      console.error('Error adding member:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const updateMember = async (id, memberData) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    try {
+      const response = await fetch(`${API_BASE_URL}/members/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(memberData),
+      });
+      if (!response.ok) throw new Error('Failed to update member');
+      const updatedMember = await response.json();
+      dispatch({ type: 'UPDATE_MEMBER', payload: updatedMember });
+    } catch (error) {
+      console.error('Error updating member:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const deleteMember = async (id) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    try {
+      const response = await fetch(`${API_BASE_URL}/members/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete member');
+      dispatch({ type: 'DELETE_MEMBER', payload: id });
+    } catch (error) {
+      console.error('Error deleting member:', error);
       dispatch({ type: 'SET_ERROR', payload: error.message });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
@@ -102,50 +189,158 @@ export const FamilyProvider = ({ children }) => {
   const addMemory = async (memoryData) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const newMemory = {
-        ...memoryData,
-        id: Math.max(...state.memories.map(m => m.id)) + 1
-      };
+      const response = await fetch(`${API_BASE_URL}/memories`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(memoryData),
+      });
+      if (!response.ok) throw new Error('Failed to add memory');
+      const newMemory = await response.json();
       dispatch({ type: 'ADD_MEMORY', payload: newMemory });
     } catch (error) {
+      console.error('Error adding memory:', error);
       dispatch({ type: 'SET_ERROR', payload: error.message });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
-  const getMemberById = (id) => {
-    return state.members.find(member => member.id === parseInt(id));
+  const updateMemory = async (id, memoryData) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    try {
+      const response = await fetch(`${API_BASE_URL}/memories/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(memoryData),
+      });
+      if (!response.ok) throw new Error('Failed to update memory');
+      const updatedMemory = await response.json();
+      dispatch({ type: 'UPDATE_MEMORY', payload: updatedMemory });
+    } catch (error) {
+      console.error('Error updating memory:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
   };
 
-  const getMemoriesByMemberId = (memberId) => {
-    return state.memories.filter(memory => 
-      memory.memberIds.includes(parseInt(memberId))
-    );
+  const deleteMemory = async (id) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    try {
+      const response = await fetch(`${API_BASE_URL}/memories/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete memory');
+      dispatch({ type: 'DELETE_MEMORY', payload: id });
+    } catch (error) {
+      console.error('Error deleting memory:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
   };
 
-  const searchMembers = (query) => {
-    return state.members.filter(member =>
-      member.name.toLowerCase().includes(query.toLowerCase()) ||
-      member.relationship.toLowerCase().includes(query.toLowerCase())
-    );
+  // Relationship methods
+  const addRelationship = async (relationshipData) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    try {
+      const response = await fetch(`${API_BASE_URL}/relationships`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(relationshipData),
+      });
+      if (!response.ok) throw new Error('Failed to add relationship');
+      const newRelationship = await response.json();
+      dispatch({ type: 'ADD_RELATIONSHIP', payload: newRelationship });
+    } catch (error) {
+      console.error('Error adding relationship:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
   };
 
-  const searchMemories = (query) => {
-    return state.memories.filter(memory =>
-      memory.title.toLowerCase().includes(query.toLowerCase()) ||
-      memory.description.toLowerCase().includes(query.toLowerCase()) ||
-      memory.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
-    );
+  const updateRelationship = async (id, relationshipData) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    try {
+      const response = await fetch(`${API_BASE_URL}/relationships/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(relationshipData),
+      });
+      if (!response.ok) throw new Error('Failed to update relationship');
+      const updatedRelationship = await response.json();
+      dispatch({ type: 'UPDATE_RELATIONSHIP', payload: updatedRelationship });
+    } catch (error) {
+      console.error('Error updating relationship:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
   };
+
+  const deleteRelationship = async (id) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    try {
+      const response = await fetch(`${API_BASE_URL}/relationships/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete relationship');
+      dispatch({ type: 'DELETE_RELATIONSHIP', payload: id });
+    } catch (error) {
+      console.error('Error deleting relationship:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const getMemberById = (id) => state.members.find((member) => member.id === parseInt(id));
+  const getMemoriesByMemberId = (memberId) =>
+    state.memories.filter((memory) => memory.memberIds && memory.memberIds.includes(parseInt(memberId)));
+
+  const searchMembers = (query) =>
+    state.members.filter(
+      (member) =>
+        member.name.toLowerCase().includes(query.toLowerCase()) ||
+        member.relationship.toLowerCase().includes(query.toLowerCase())
+    );
+
+  const searchMemories = (query) =>
+    state.memories.filter(
+      (memory) =>
+        memory.title.toLowerCase().includes(query.toLowerCase()) ||
+        memory.description.toLowerCase().includes(query.toLowerCase()) ||
+        (memory.tags && memory.tags.some((tag) => tag.toLowerCase().includes(query.toLowerCase())))
+    );
+
+  const getRelationshipsByMember = (memberId) =>
+    state.relationships.filter(
+      (rel) => rel.member1Id === memberId || rel.member2Id === memberId
+    );
 
   const value = {
     ...state,
     addMember,
+    updateMember,
+    deleteMember,
     addMemory,
+    updateMemory,
+    deleteMemory,
+    addRelationship,
+    updateRelationship,
+    deleteRelationship,
     getMemberById,
     getMemoriesByMemberId,
+    getRelationshipsByMember,
     searchMembers,
     searchMemories,
     dispatch
@@ -164,4 +359,4 @@ export const useFamily = () => {
     throw new Error('useFamily must be used within a FamilyProvider');
   }
   return context;
-}; 
+};

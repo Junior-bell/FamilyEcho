@@ -75,7 +75,7 @@ const FamilyTreePage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-primary-cream page-padding">
+    <div className="min-h-screen bg-primary-cream px-8 md:px-24">
       <div className="max-w-7xl mx-auto container-padding">
         {/* Header */}
         <motion.div

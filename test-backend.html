@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FamilyEcho Backend Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+        }
+        
+        .endpoint-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .endpoint-url {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            color: #495057;
+            margin-bottom: 15px;
+            word-break: break-all;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .loading {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-success {
+            background: #28a745;
+            box-shadow: 0 0 10px #28a745;
+        }
+        
+        .status-error {
+            background: #dc3545;
+            box-shadow: 0 0 10px #dc3545;
+        }
+        
+        .status-loading {
+            background: #ffc107;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .summary h2 {
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+        
+        .summary p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 FamilyEcho Backend Test</h1>
+        <p class="subtitle">Test your backend API endpoints to verify everything is working</p>
+        
+        <div class="test-section">
+            <div class="endpoint-title">
+                <span class="status-indicator" id="members-status"></span>
+                Members Endpoint
+            </div>
+            <div class="endpoint-url">GET http://localhost:8081/api/members</div>
+            <button onclick="testEndpoint('members')">Test Members API</button>
+            <div id="members-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="endpoint-title">
+                <span class="status-indicator" id="relationships-status"></span>
+                Relationships Endpoint
+            </div>
+            <div class="endpoint-url">GET http://localhost:8081/api/relationships</div>
+            <button onclick="testEndpoint('relationships')">Test Relationships API</button>
+            <div id="relationships-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="endpoint-title">
+                <span class="status-indicator" id="memories-status"></span>
+                Memories Endpoint
+            </div>
+            <div class="endpoint-url">GET http://localhost:8081/api/memories</div>
+            <button onclick="testEndpoint('memories')">Test Memories API</button>
+            <div id="memories-result"></div>
+        </div>
+        
+        <div class="summary" id="summary" style="display: none;">
+            <h2>✅ Backend Status</h2>
+            <p id="summary-text"></p>
+        </div>
+    </div>
+    
+    <script>
+        async function testEndpoint(endpoint) {
+            const resultDiv = document.getElementById(`${endpoint}-result`);
+            const statusIndicator = document.getElementById(`${endpoint}-status`);
+            
+            // Show loading
+            resultDiv.className = 'result loading';
+            resultDiv.innerHTML = '<span class="status-indicator status-loading"></span>Testing...';
+            statusIndicator.className = 'status-indicator status-loading';
+            
+            try {
+                const response = await fetch(`http://localhost:8081/api/${endpoint}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <span class="status-indicator status-success"></span>
+                        <strong>SUCCESS!</strong> Backend is responding<br>
+                        <strong>Status:</strong> ${response.status} ${response.statusText}<br>
+                        <strong>Response:</strong> ${JSON.stringify(data, null, 2)}
+                    `;
+                    statusIndicator.className = 'status-indicator status-success';
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <span class="status-indicator status-error"></span>
+                    <strong>ERROR!</strong> Backend is not responding<br>
+                    <strong>Error:</strong> ${error.message}<br>
+                    <strong>Possible causes:</strong><br>
+                    • Backend is not running (check if mvn spring-boot:run is active)<br>
+                    • Backend is running on a different port<br>
+                    • CORS is blocking the request
+                `;
+                statusIndicator.className = 'status-indicator status-error';
+            }
+            
+            updateSummary();
+        }
+        
+        function updateSummary() {
+            const summaryDiv = document.getElementById('summary');
+            const summaryText = document.getElementById('summary-text');
+            
+            const membersStatus = document.getElementById('members-status').classList.contains('status-success');
+            const relationshipsStatus = document.getElementById('relationships-status').classList.contains('status-success');
+            const memoriesStatus = document.getElementById('memories-status').classList.contains('status-success');
+            
+            if (membersStatus || relationshipsStatus || memoriesStatus) {
+                summaryDiv.style.display = 'block';
+                
+                const workingEndpoints = [
+                    membersStatus && 'Members',
+                    relationshipsStatus && 'Relationships',
+                    memoriesStatus && 'Memories'
+                ].filter(Boolean);
+                
+                if (workingEndpoints.length === 3) {
+                    summaryText.innerHTML = '🎉 All endpoints are working! Your backend is fully operational and ready to connect with the frontend.';
+                } else if (workingEndpoints.length > 0) {
+                    summaryText.innerHTML = `⚠️ ${workingEndpoints.length}/3 endpoints working: ${workingEndpoints.join(', ')}. Check the errors above for non-working endpoints.`;
+                }
+            }
+        }
+        
+        // Auto-test all endpoints on page load
+        window.onload = function() {
+            setTimeout(() => testEndpoint('members'), 500);
+            setTimeout(() => testEndpoint('relationships'), 1000);
+            setTimeout(() => testEndpoint('memories'), 1500);
+        };
+    </script>
+</body>
+</html>
